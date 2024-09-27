@@ -8,6 +8,8 @@ import os
 #import data from config file
 config_path = os.path.join(os.path.dirname(__file__),
                            '../Config/config.json')
+content_out = os.path.join(os.path.dirname(__file__),
+                           '../Logs/out.log')
 with open(config_path, 'r') as config_file:
     config = json.load(config_file)
 
@@ -43,12 +45,20 @@ def scrape_data(url, headers, last_run):
                 print("post time")
                 print(formatted_post_time)
                 if formatted_post_time > last_run:
-                    reddit_post_id = post['data-fullname'].split('_')[-1]
-                    title = post.find('p', class_='title').a.text
-                    author_name = post.find('p', class_='tagline').a.text
-                    upvotes = post.find('div', class_='score unvoted').text
-                    comments_url = urljoin(url, comments_element['href'])
-                    author_url = urljoin(user_url, author_name)
+                    data = {
+                        "reddit_post_id": post['data-fullname'].split('_')[-1],
+                        "title": post.find('p', class_='title').a.text,
+                        "author_name": post.find('p', class_='tagline').a.text,
+                        "upvotes": post.find('div', class_='score unvoted').text,
+                        "comments_url": urljoin(url, comments_element['href']),
+                        "author_url": urljoin(user_url, post.find('p', class_='tagline').a.text)
+                        }
+                    with open(content_out, 'r+') as content_out_file:
+                        existing_data = json.load(content_out_file)
+                        existing_data.append(data)
+                        content_out_file.seek(0)
+                        json.dump(existing_data, content_out_file, indent=4)
+                        content_out_file.truncate()
                 else: return
 
     
