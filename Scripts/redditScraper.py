@@ -28,10 +28,30 @@ def make_request(url, headers):
         print(f"Error making request to {url}: {error}")
         return None
     
+def scrape_data(url, headers, last_run):
+    content = make_request(url, headers)
+    if content:
+        soup = BeautifulSoup(content, 'html.parser')
+        posts = soup.find_all('div', class_='thing')
+        for post in posts:
+            #this is a check to see if a post is an ad
+            comments_element = post.find('a', class_='bylink comments may-blank')
+            if comments_element is not None:
+                time_tag = post.find('time')
+                post_time = time_tag['datetime']
+                formatted_post_time = datetime.datetime.fromisoformat(post_time)
+                print("post time")
+                print(formatted_post_time)
+                if formatted_post_time > last_run:
+                    print("success")
+                else: return
 
+    
+scrape_data(url, headers, last_run)
 
-print(f"Script executed at: {datetime.datetime.now()}")
+now = datetime.datetime.now(datetime.timezone.utc)
 
-config['last_run'] = datetime.datetime.now().isoformat()
+config['last_run'] = now.strftime('%Y-%m-%d %H:%M:%S%z')
+
 with open(config_path, 'w') as config_file:
     json.dump(config, config_file, indent=4)
