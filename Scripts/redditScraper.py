@@ -43,7 +43,12 @@ def scrape_data(url, headers, last_run):
                 print("post time")
                 print(formatted_post_time)
                 if formatted_post_time > last_run:
-                    print("success")
+                    reddit_post_id = post['data-fullname'].split('_')[-1]
+                    title = post.find('p', class_='title').a.text
+                    author_name = post.find('p', class_='tagline').a.text
+                    upvotes = post.find('div', class_='score unvoted').text
+                    comments_url = urljoin(url, comments_element['href'])
+                    author_url = urljoin(user_url, author_name)
                 else: return
 
     
