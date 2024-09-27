@@ -1,0 +1,5 @@
+Environment/
+logs/
+__pycache__/
+*.pyc
+*.bak
