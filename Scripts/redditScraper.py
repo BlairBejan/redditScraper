@@ -5,11 +5,12 @@ import datetime
 import json
 import os
 
+
 #import data from config file
 config_path = os.path.join(os.path.dirname(__file__),
                            '../Config/config.json')
 content_out = os.path.join(os.path.dirname(__file__),
-                           '../Logs/out.log')
+                           '../Logs/out.json')
 with open(config_path, 'r') as config_file:
     config = json.load(config_file)
 
@@ -40,8 +41,7 @@ def scrape_data(url, headers, last_run):
             comments_element = post.find('a', class_='bylink comments may-blank')
             if comments_element is not None:
                 time_tag = post.find('time')
-                post_time = time_tag['datetime']
-                formatted_post_time = datetime.datetime.fromisoformat(post_time)
+                formatted_post_time = datetime.datetime.fromisoformat(time_tag['datetime'])
                 print("post time")
                 print(formatted_post_time)
                 if formatted_post_time > last_run:
