@@ -6,12 +6,10 @@ import json
 import os
 from dbfunctions import save_posts
 
-
+print("Environment variables:\n", os.environ)
 #import data from config file
 config_path = os.path.join(os.path.dirname(__file__),
                            '../Config/config.json')
-content_out = os.path.join(os.path.dirname(__file__),
-                           '../Logs/out.json')
 with open(config_path, 'r') as config_file:
     config = json.load(config_file)
 
