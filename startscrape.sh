@@ -6,6 +6,7 @@ check_db() {
     if ! tasklist.exe | grep -q mongod.exe; then
         echo "mongodb is not running, please start before running program"
         exit
+    fi
 }
 check_db
 source Environment/bin/activate

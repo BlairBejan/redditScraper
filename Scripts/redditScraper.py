@@ -1,9 +1,10 @@
 import requests
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin
-import datetime
+from datetime import datetime, timezone
 import json
 import os
+from dbfunctions import save_posts
 
 
 #import data from config file
@@ -17,7 +18,8 @@ with open(config_path, 'r') as config_file:
 url = config['url']
 user_url = config['user_url']
 headers = config['headers']
-last_run = datetime.datetime.fromisoformat(config['last_run'])
+last_runtest = config['last_run']
+last_run = datetime.strptime(last_runtest, '%Y-%m-%d %H:%M:%S%z')
 
 
 
@@ -41,7 +43,8 @@ def scrape_data(url, headers, last_run):
             comments_element = post.find('a', class_='bylink comments may-blank')
             if comments_element is not None:
                 time_tag = post.find('time')
-                formatted_post_time = datetime.datetime.fromisoformat(time_tag['datetime'])
+                post_time = time_tag['datetime']
+                formatted_post_time = datetime.fromisoformat(post_time)
                 print("post time")
                 print(formatted_post_time)
                 if formatted_post_time > last_run:
@@ -53,18 +56,14 @@ def scrape_data(url, headers, last_run):
                         "comments_url": urljoin(url, comments_element['href']),
                         "author_url": urljoin(user_url, post.find('p', class_='tagline').a.text)
                         }
-                    with open(content_out, 'r+') as content_out_file:
-                        existing_data = json.load(content_out_file)
-                        existing_data.append(data)
-                        content_out_file.seek(0)
-                        json.dump(existing_data, content_out_file, indent=4)
-                        content_out_file.truncate()
+                    print(data)
+                    save_posts(data)
                 else: return
 
     
 scrape_data(url, headers, last_run)
 
-now = datetime.datetime.now(datetime.timezone.utc)
+now = datetime.now(timezone.utc)
 
 config['last_run'] = now.strftime('%Y-%m-%d %H:%M:%S%z')
 
