@@ -8,3 +8,12 @@ def save_posts(data):
     print(data)
     collection = db['Posts']
     collection.insert_one(data)
+
+
+def get_posts():
+    client = MongoClient('mongodb://localhost:27017/')
+    db = client['scraping_db']
+    posts_collection = db['Posts']
+    print(posts_collection)
+    posts = posts_collection.find({})
+    return posts

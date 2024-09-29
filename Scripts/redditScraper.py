@@ -16,22 +16,6 @@ last_runtest = config['last_run']
 last_run = datetime.strptime(last_runtest, '%Y-%m-%d %H:%M:%S%z')
 
 
-
-'''
-def make_request(url, headers):
-    try:
-        response = requests.get(url, headers=headers)
-        response.raise_for_status()
-        return response.content
-    except requests.exceptions.RequestException as error:
-        print(f"Error making request to {url}: {error}")
-        return None
-'''
-
-'''    content = make_request(url, headers)
-    if content:
-        soup = BeautifulSoup(content, 'html.parser')
-'''
 def scrape_data(url, headers, last_run):
     soup = get_soup(url, headers)
     posts = soup.find_all('div', class_='thing')
@@ -55,6 +39,7 @@ def scrape_data(url, headers, last_run):
                     }
                 print(data)
                 save_posts(data)
+    
             else: return
 
     
@@ -67,3 +52,28 @@ config['last_run'] = now.strftime('%Y-%m-%d %H:%M:%S%z')
 config_path = os.path.join(os.path.dirname(__file__), '../Config/config.json')
 with open(config_path, 'w') as config_file:
     json.dump(config, config_file, indent=4)
+
+
+
+
+
+
+
+
+
+'''
+def make_request(url, headers):
+    try:
+        response = requests.get(url, headers=headers)
+        response.raise_for_status()
+        return response.content
+    except requests.exceptions.RequestException as error:
+        print(f"Error making request to {url}: {error}")
+        return None
+'''
+
+'''    content = make_request(url, headers)
+    if content:
+        soup = BeautifulSoup(content, 'html.parser')
+'''
+

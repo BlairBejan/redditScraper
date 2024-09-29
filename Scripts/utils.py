@@ -16,7 +16,6 @@ def get_soup(url, headers):
         response = requests.get(url, headers=headers)
         response.raise_for_status()
         soup = BeautifulSoup(response.content, 'html.parser')
-        print (soup)
         return soup
     except requests.exceptions.RequestException as error:
         print(f"Error making request to {url}: {error}")

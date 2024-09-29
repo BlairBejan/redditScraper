@@ -1,44 +1,26 @@
-from pymongo import MongoClient
-from redditScraper import make_request
-import requests
-import json
-import os
-from bs4 import BeautifulSoup
+from dbfunctions import get_posts
+from utils import read_config, get_soup
 
 
-config_path = os.path.join(os.path.dirname(__file__),
-                           '../Config/config.json')
-with open(config_path, 'r') as config_file:
-    config = json.load(config_file)
+config = read_config()
 
 user_url = config['user_url']
 headers = config['headers']
 
-def getposts():
-    client = MongoClient('mongodb://localhost:27017/')
-    db = client['scraping_db']
-    posts_collection = db['Posts']
-    print(posts_collection)
-    posts = posts_collection.find({})
-    client.close()
-    return posts
-
-def make_request(url, headers):
-    try:
-        response = requests.get(url, headers=headers)
-        response.raise_for_status()
-        return response.content
-    except requests.exceptions.RequestException as error:
-        print(f"Error making request to {url}: {error}")
-        return None
+#soup = get_soup()
     
-def parseposts(posts):
+def parseposts():
+    posts = get_posts()
     for post in posts:
-        content = make_request(user_url, headers=headers)
-        if content:
-            soup = BeautifulSoup(content, 'html.parser')
+        comments_url = post.get('comments_url')
+        print(comments_url)
+        soup = get_soup(comments_url, headers)
+        comments = soup.find_all('div', class_='entry unvoted')
+        for comment in comments:
+                comment_div = comment.find('div', class_='md')
+                
+        
 
 
 
-posts = getposts()
-parseposts(posts)
+parseposts()
